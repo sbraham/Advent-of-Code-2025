@@ -9,43 +9,32 @@ $real_sequence = ["R21", "L37", "L12", "R13", "L5", "L32", "L25", "L42", "L23", 
 
 echo "$dial : $count \n\n";
 
-foreach ($test_sequence as $step) {
-    echo str_pad($step, 4, " ") . " : ";
-    echo str_pad($dial, 3, " ");
+foreach ($real_sequence as $step) {
+    $start_dial = $dial;
+    $operation = 0;
 
     if (substr($step, 0, 1) == "L") {
-        $dial = $dial - ((int) substr($step, 1));
-        echo " - " . str_pad(substr($step, 1), 4, " ");
-        echo " = " . str_pad($dial, 4, " ");
-    } elseif (substr($step, 0, 1) == "R") {
-        $dial = $dial + ((int) substr($step, 1));
-        echo " + " . str_pad(substr($step, 1), 4, " ");
-        echo " = " . str_pad($dial, 4, " ");
+        $operation = -1;
+    } else if (substr($step, 0, 1) == "R") {
+        $operation = +1;
     }
     
-    if ($dial > 99) {
-        while ($dial > 99) {
-            $dial = 0 + ($dial - 100);
-            $count++;
-        } 
-    } elseif ($dial < 0) {
-        while ($dial < 0) {
-            $dial = 100 + $dial;
-            $count++;
-        }
-    } elseif ($dial == 0) { 
-        #is zero
-        #$count++;
+    foreach (range(1, (int) substr($step, 1)) as $i) {
+        $dial = $dial + $operation;
+        if ($dial == 100) $dial = 0;
+        if ($dial == -1) $dial = 99;
+        if ($dial == 0) $count++;
     }
-    
-    echo " : " . str_pad($dial, 3, " ") . " : $count";
-    echo "\n";
+
+    echo ""
+        . str_pad($start_dial, 4, " ") . " : "
+        . str_pad($step, 4, " ") . " : "
+        . str_pad($dial, 4, " ") . " : "
+        . str_pad($count, 4, " ") . "\n";
 } 
 
 echo "\n";
 echo "count: ";
 echo $count;
-
-
 
 ?>
