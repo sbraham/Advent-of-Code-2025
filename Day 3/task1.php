@@ -4,59 +4,24 @@ function combineNumbers($first_battary, $second_battary) {
     return (int) ((string)$first_battary . (string)$second_battary);
 }
 
-function maxThenMax($sequence) {
-    if (is_string($sequence)) $sequence = str_split($sequence);
+function maxJoltage($bank) {
+    if (is_string($bank)) $bank = str_split($bank);
 
-    $first_max = max($sequence);
-    #echo "$first_max at " . array_search($first_max, $sequence) . "\n";
-    #echo "count is " . count($sequence)-1 . "\n";
+    $first_max = max($bank);
+    #echo "$first_max at " . array_search($first_max, $bank) . "\n";
+    #echo "count is " . count($bank)-1 . "\n";
+    $index_of_max = array_search($first_max, $bank);
 
-    if(array_search($first_max, $sequence) == count($sequence)-1) {
+    if($index_of_max == count($bank)-1) {
         #echo "at the end \n";
-        $second_max = $first_max; array_pop($sequence);
-        $first_max = max($sequence);
+        $second_max = $first_max; array_pop($bank);
+        $first_max = max($bank);
     } else {
-        array_slice($sequence, array_search($first_max, $sequence)+1);
-        $second_max = max($sequence);
+        $bank = array_slice($bank, $index_of_max+1);
+        $second_max = max($bank);
     }
 
     return combineNumbers($first_max, $second_max);
-}
-
-function maxJoltage($bank_to_search) {
-    if (!is_string($bank_to_search)) {
-        throw new Exception('maxJoltage($bank_to_search) ... $bank_to_search must be a string' . "\n");
-    }
-
-    return maxThenMax($bank_to_search);
-
-    /*
-
-    $bank_as_array = str_split($bank_to_search);
-    $max_joltage_position_one = $bank_as_array[0];
-    $max_joltage_position_two = $bank_as_array[1];
-
-    #echo "$max_joltage_position_one$max_joltage_position_two-0\n";
-
-    for ($i = 1; $i < count($bank_as_array); $i++) {
-        if ($i != count($bank_as_array)-1 && 
-            combineNumbers($bank_as_array[$i], $bank_as_array[$i+1]) > combineNumbers($max_joltage_position_one, $max_joltage_position_two)) 
-        {
-            $max_joltage_position_one = $bank_as_array[$i];
-            $max_joltage_position_two = $bank_as_array[$i+1];
-
-            #echo "$max_joltage_position_one$max_joltage_position_two-1\n";
-        } else if (combineNumbers($max_joltage_position_one, $bank_as_array[$i]) > combineNumbers($max_joltage_position_one, $max_joltage_position_two)) 
-        {
-            $max_joltage_position_two = $bank_as_array[$i];
-        }
-
-        #echo "$max_joltage_position_one$max_joltage_position_two-2\n";
-    }
-
-    return combineNumbers($max_joltage_position_one, $max_joltage_position_two);
-
-    */
 }
 
 function sumOverSupply($supply) {
@@ -289,10 +254,6 @@ echo "Test Plan\n";
 #echo ((combineNumbers(1, 1) + combineNumbers(1, 1)) == 22 ? "✅ Pass" : "🟥 fail") . "\n";
 
 #echo ((maxJoltage("11")) == 11 ? "✅ Pass" : "🟥 fail") . "\n";
-
-#echo ((maxThenMax("111111111")) == 11 ? "✅ Pass" : "🟥 fail = " . maxThenMax("111111111")) . "\n";
-#echo ((maxThenMax("987654321")) == 98 ? "✅ Pass" : "🟥 fail = " . maxThenMax("987654321")) . "\n";
-#echo ((maxThenMax("123456789")) == 89 ? "✅ Pass" : "🟥 fail = " . maxThenMax("123456789")) . "\n";
 
 echo ((maxJoltage("111111111")) == 11 ? "✅ Pass" : "🟥 fail = " . maxJoltage("111111111")) . "\n";
 echo ((maxJoltage("987654321")) == 98 ? "✅ Pass" : "🟥 fail = " . maxJoltage("987654321")) . "\n";
