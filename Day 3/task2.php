@@ -1,55 +1,55 @@
 <?php
 
-function combineNumbers($int_array) {
+#String to Array : str_split($bank)
+
+function intArrayToInt($int_array) {
     return $num = (int) implode('', $int_array);
 }
 
-function twoMaxInOrder($bank) {
+# take an array of number and return the n highest values in order
+# take an array and an int
+# return an array
+function nMaxInOrder_arr($bank, $n) {
     if (is_string($bank)) $bank = str_split($bank);
 
-    $first_max = max($bank);
-    #echo "$first_max at " . array_search($first_max, $bank) . "\n";
-    #echo "count is " . count($bank)-1 . "\n";
-    $index_of_max = array_search($first_max, $bank);
+    if ($n < 1) throw new Exception('$n < 1' . "\n");
 
-    if($index_of_max == count($bank)-1) {
-        #echo "at the end \n";
-        $second_max = $first_max; array_pop($bank);
-        $first_max = max($bank);
-    } else {
-        $bank = array_slice($bank, $index_of_max+1);
-        $second_max = max($bank);
+    $len = count($bank);
+    if ($n >= $len) return $bank;
+
+    $stack = [];
+    for ($i = 0; $i < $len; $i++) {
+        $digit = $bank[$i];
+        // while we can pop a smaller digit and still fill up to n with remaining digits
+        while (count($stack) > 0 && end($stack) < $digit && (count($stack) - 1 + ($len - $i)) >= $n) {
+            array_pop($stack);
+        }
+
+        if (count($stack) < $n) {
+            $stack[] = $digit;
+        }
     }
 
-    return combineNumbers([$first_max, $second_max]);
+    // ensure exactly n elements
+    return array_slice($stack, 0, $n);
 }
 
 function nMaxInOrder($bank, $n) {
-    if (is_string($bank)) $bank = str_split($bank);
-
-    $firstSection = array_slice($bank, 0, $n);
-
-    $first_max = max($firstSection);
-    $index_of_max = array_search($first_max, $bank);
-
-    if ($index_of_max = $n) {
-        return combineNumbers(array_slice($bank, $n))
-    }
-
+    return intArrayToInt(nMaxInOrder_arr($bank, $n));
 }
 
-function sumOverSupply($supply) {
+function sumOverSupply($supply, $n = 12) {
     $totalJoltage = 0;
     foreach($supply as $bank) {
-        $twoMaxInOrder = twoMaxInOrder($bank);
-        #echo "$twoMaxInOrder\n";
-        $totalJoltage = $totalJoltage + $twoMaxInOrder;
+        $maxJoltage = nMaxInOrder($bank, $n);
+        #echo "$maxJoltage\n";
+        $totalJoltage = $totalJoltage + $maxJoltage;
     }
 
     return $totalJoltage;
 }
 
-#should = 357;
+#should = 3121910778619;
 $test_sequence = [
     "987654321111111",
     "811111111111119",
@@ -260,29 +260,35 @@ $real_sequence = [
     "3616433333424364342231322772322273742562435322524343222733733633315231217432253332344435423437477333"
 ];
 
-#echo (combineNumbers(4, 5) + combineNumbers(5, 4)) . "\n";
+#echoint(4, 5) IntintArrayToInt 4))IntintArrayToInt";
 
 echo "Test Plan\n";
-#echo ((combineNumbers(4, 5)) == 45 ? "✅ Pass" : "🟥 fail") . "\n";
-#echo ((combineNumbers(4, 5) + combineNumbers(5, 4)) == 99 ? "✅ Pass" : "🟥 fail") . "\n";
-#echo ((combineNumbers(1, 1) + combineNumbers(1, 1)) == 22 ? "✅ Pass" : "🟥 fail") . "\n";
 
-#echo ((twoMaxInOrder("11")) == 11 ? "✅ Pass" : "🟥 fail") . "\n";
+function test($func, $exp, $is = true) {
+    if($is) {
+        echo $func == $exp ? "✅ Pass\n" : "🟥 fail = " . $func . "\n";
+    } else {
+        echo $func != $exp ? "✅ Pass\n" : "🟥 fail = " . $func . "\n";
+    }
+}
 
-echo ((twoMaxInOrder("111111111")) == 11 ? "✅ Pass" : "🟥 fail = " . twoMaxInOrder("111111111")) . "\n";
-echo ((twoMaxInOrder("987654321")) == 98 ? "✅ Pass" : "🟥 fail = " . twoMaxInOrder("987654321")) . "\n";
-echo ((twoMaxInOrder("123456789")) == 89 ? "✅ Pass" : "🟥 fail = " . twoMaxInOrder("123456789")) . "\n";
+test(intArrayToInt([1]), 1);
+test(intArrayToInt([1,2,3,4]), 1234);
 
-echo ((twoMaxInOrder("12345678888889")) == 89 ? "✅ Pass" : "🟥 fail") . "\n";
+echo "\n";
 
-echo ((twoMaxInOrder("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111")) == 11 ? "✅ Pass" : "🟥 fail = " . twoMaxInOrder("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111")) . "\n";
-echo ((twoMaxInOrder("2232212212212222211221231124224222213132222133122224222123222112324122222122221322222225222342243112")) == 54 ? "✅ Pass" : "🟥 fail = " . twoMaxInOrder("2232212212212222211221231124224222213132222133122224222123222112324122222122221322222225222342243112")) . "\n";
+test(nMaxInOrder("123456789", 1), 9);
 
-echo ((sumOverSupply($test_sequence)) == 357 ? "✅ Pass" : "🟥 fail = " . sumOverSupply($test_sequence)) . "\n";
+test(nMaxInOrder("123456789", 2), 89);
+test(nMaxInOrder("987654321", 2), 98);
 
+test(nMaxInOrder("123456789", 3), 789);
 
-echo ((sumOverSupply($real_sequence)) != 17086 ? "✅ Pass" : "🟥 fail = " . sumOverSupply($real_sequence) . " is too low") . "\n";
+echo "\n";
 
+test(sumOverSupply($test_sequence), 3121910778619);
+
+test(sumOverSupply($real_sequence), 17086, False);
 
 echo "\n";
 echo sumOverSupply($real_sequence);
